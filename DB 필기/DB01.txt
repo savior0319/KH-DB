@@ -50,7 +50,6 @@ Table 의 묶음 -> DB
  -> Lite Edition : 모바일용 데이터 베이스
  -> Express Edition : 무료 배포용
 	※ Express Edition (무료 버전) - XE 버전이라고 부름
-
  
 
  @ Orcal DBMS의 구조
@@ -69,6 +68,36 @@ Table 의 묶음 -> DB
 	           DB  → →   테이블	 - 데이터 데이터 데이터
 		  ↘
 		      →	  테이블	 - 데이터 데이터 데이터
+
+ @ SQL Plus
+ -> Oracle DBMS를 CMD 창에서 관리할 수 있는 프로그램
+
+## 테스트 계정(HR) 활성화 하기 ##
+
+1. system 계정으로 접속
+	-Enter User-name : system
+	-Enter Password : [비밀번호 입력]
+
+2. 계정 확인 SQL
+	select username from dba_users;
+
+3. 테스트 계정(HR) 활성화
+	alter user [계정] account unlock; 락 해제
+	alter user [계정] identified by [비밀번호];
+
+	ex)
+	alter user HR account unlock;
+	alter user HR identified by hr;
+
+4. 접속하기 
+	conn [계정];
+	ex)
+	conn HR;
+	-> 접속 시 설정했던 비밀번호 입력 후 접속
+
+5. 현재 접속된 자신의 계정 확인
+	show user;
+
 
 
 
