@@ -1,0 +1,19 @@
+
+ @ 컬럼 별칭
+ -> 출력되는 결과물 컴럼에 별칭을 부여할 수 있음
+ -> AS를 사용하여 출력되는 Result Set에 컬럼명을 변경 할 수 있음
+
+   ex)
+   -- 보너스 금액 + 연봉
+   SELECT EMP_NAME, (SALARY * 12) * (1 + BONUS) AS "연봉 + 보너스"
+   FROM EMPLOYEE
+   WHERE (SALARY * 12) * (1 + BONUS) IS NOT NULL;
+
+
+ @ 리터럴
+
+   ex)
+   -- 보너스 금액 + 연봉 + 리터럴
+  SELECT EMP_NAME, (SALARY * 12) * (1 + BONUS) AS "연봉(보너스)", '원' AS "단위"
+  FROM EMPLOYEE
+  WHERE (SALARY * 12) * (1 + BONUS) IS NOT NULL;
