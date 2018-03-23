@@ -104,39 +104,47 @@
     SELECT UPPER('Welcome To My Oracle World') as "UPPER"
     FROM DUAL;
     
-     SELECT LOWER('Welcome To My Oracle World') as "LOWER"
+    SELECT LOWER('Welcome To My Oracle World') as "LOWER"
     FROM DUAL;
     
     SELECT INITCAP('welcome to my oracle world') as "INITCAP"
     FROM DUAL;
     
+    SELECT CONCAT('A', '1') AS "CONCAT"
+    FROM DUAL;
     
-
+    SELECT 'A' || '1' || '2' AS "||"
+    FROM DUAL;
     
+    SELECT REPLACE ('Hello World', 'Hello', 'Hell' ) AS "REPLACE"
+    FROM DUAL;
     
+    SELECT EMP_NAME AS "이름", EMP_NO AS "주민번호", REPLACE(EMAIL, 'kh', 'iei') AS "이메일"
+    FROM EMPLOYEE;
     
-      
+    SELECT ABS(-1), ABS(1)
+    FROM DUAL;
     
+    SELECT MOD(10, 3)  AS "MOD"
+    FROM DUAL;
     
+    SELECT ROUND(123.456, 2) AS "ROUND" 
+    FROM DUAL;
     
+    SELECT ROUND(123.456, -1) AS "ROUND" 
+    FROM DUAL;
     
+    SELECT ROUND(123.456, -2) AS "ROUND" 
+    FROM DUAL;
     
+    SELECT TRUNC(123.456, 2) AS "TRUNC" 
+    FROM DUAL;
     
+    SELECT TRUNC(123.456, -1) AS "TRUNC" 
+    FROM DUAL;
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
+    SELECT TRUNC(123.456, -2) AS "TRUNC" 
+    FROM DUAL;
     
     
     
