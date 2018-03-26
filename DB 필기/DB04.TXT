@@ -1,0 +1,135 @@
+
+  @ GROUP BY 절
+  -> 그룹함수는 그룹으로 묶여진 한개의 결과 값만 산출하게 됨
+  -> 그룹함수를 이용하여 여러개의 결과 값을 산출하기 위해서는 구룹함수가 적용될 그룹의 기준을 GROUP BY 절에
+    기술하여 사용 해야 함
+
+  ex) DEPT_CODE 별(부서 별) SALARY의 합계를 보고 싶다면
+  SELECT DEPT_CODE, SUM(SALARY) FROM EMPLOYEE;
+    -> 해당 코드를 실행하게 되면 에러가 발생함
+    -> 이유는? SUM 을 하게 되면 합산이 되지만 DEPT_CODE 자체는 합션이 될 수 없기 때문임
+
+  @ HAVING 절
+  -> 그룹함수로 값을 구해올 그룹에 대해 조건을 설정 할 때는 HAVING 절을 사용 함
+  (그룹함수를 사용한 WHERE 절은 사용 불가 함)
+
+  ex) 급여 평균이 3,000,000 원 이상인 그룹에 대한 평균 급여 값 검색
+
+  @ ROLLUP 과 CUBE
+  -> 그룹별 산출한 결과 값의 집계를 계산하는 함수
+  -> ROLLUP은 가장 먼저 지정한 그룹별 합계와 총 함계를 구함
+  -> CUBE는 그룹으로 지정된 모든 그룹에 대한 합계와 총 합계를 구함
+
+  - ROLLUP은 사용하게 되면 부서별 집계 및 총 집계를 확인 할 수 있음
+  - ROLLUP은 가장 먼저 지정한 그룹별 집계와 총 집계를 구하는 함수
+
+  ex)
+  /*부서 내 직급 별 - ROLLUP */
+  SELECT DEPT_CODE AS "부서코드", JOB_CODE "직급", COUNT(*) AS "인원"
+  FROM EMPLOYEE
+  GROUP BY ROLLUP(DEPT_CODE, JOB_CODE)
+  ORDER BY 1;
+
+
+  - CUBE 는 그룹으로 지정된 모든 그룹에 대한 집계와 총 집계를 구함
+  - 즉, 위의 코드를 보면 부서별 집계 이후에 직급별 집계를 진행하고 마지막으로
+  - 총 집계를 구하게 됨
+
+  /*부서별 집계와 직급별 집계 - CUBE*/
+  SELECT DEPT_CODE AS "부서코드", JOB_CODE "직급", COUNT(*) AS "인원"
+  FROM EMPLOYEE
+  GROUP BY CUBE(DEPT_CODE, JOB_CODE)
+  ORDER BY 1;
+
+  ROULLUP & CUBE
+  -> ROLLUP 과 CUBE는 집계용 함수
+  ROLLUP은 가장 먼저 지정한 그룹별 집계 및 총 집계
+  CUBE는 그룹으로 지정된 모든 그룹에 대한 그룹별 집계 및 총 집계
+
+  @ GROUPING
+  -> ROLLUP이나 CUBE에 의한 집계 산출물이 인자로 전달받은 컬럼 집합의 산출물이면
+    0을 반환하고 아니면 1을 반환하는 함수
+
+  - GROUP BY에 의해서 산출된 ROW인 경우에는 0을 반환하고
+    ROLLUP이나 CUBE에 의해서 산출된 ROW인 경우에는 1을 반환하게 됨
+
+    ex)
+    1.
+    SELECT DEPT_CODE AS "부서", COUNT(*) AS "인원", DECODE(GROUPING(DEPT_CODE), '1', '총 집계', '부서별') AS "GROUPING"
+    FROM EMPLOYEE
+    GROUP BY ROLLUP(DEPT_CODE);
+
+    2.
+    SELECT NVL(DECODE(GROUPING(DEPT_CODE), 0, DEPT_CODE, 1, '총집계'), '부서없음') AS "부서", COUNT(*) AS "인원"
+    FROM EMPLOYEE
+    GROUP BY ROLLUP(DEPT_CODE);
+
+    3.
+    SELECT DEPT_CODE AS "부서번호", JOB_CODE AS "직급",
+    COUNT(*) AS "인원",
+        CASE WHEN GROUPING(DEPT_CODE) = 0 AND GROUPING(JOB_CODE) = 1 THEN '부서별 집계'
+        WHEN GROUPING(DEPT_CODE) = 1 AND GROUPING(JOB_CODE) = 0 THEN '직급별 집계'
+        WHEN GROUPING(DEPT_CODE) = 1 AND GROUPING(JOB_CODE) = 1 THEN '총 집계'
+        ELSE ' '
+        END AS "집계"
+    FROM EMPLOYEE
+    GROUP BY CUBE(DEPT_CODE, JOB_CODE)
+    ORDER BY 1;
+
+    @ 조인문(JOIN)
+    -> 여러 테이블의 레코드를 조합하여 하나의 열로 표현 한 것
+    -> 두 개 이상의 테이블에서 연관성을 가지고 있는 데이터들을 따로 분류하고
+    새로운 가상의 테이블을 이용하여 출력 함
+    -> 서로 다른 테이블에서 각 각의 공통 값을 이용함으로써 필드를 조합함
+
+    ※ JOIN 시 컬럼명이 같을 경우와 다를 경우 사용법 2가지가 있음
+    - Orcle 전용 구문
+    - ANSI 표준 구문 (ANSI 펴준은 DBMS에 상관없이 공통적으로 사용하는 표준 SQL)
+
+    ### 연결에 사용할 두 테이블의 컬럼명이 서로 다른 경우 ##
+    - ORACLE 전용 구문
+      SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE
+      FROM EMPLOYEE, DEPARTMENT
+      WHERE DEPT_CODE = DEPT_ID;
+
+      ※ ORACLE 에서는 WHERE 절을 이용하여 '='를 사용함
+
+    - ANSI 표준 구문
+      SELECT EMP_ID, EMP_NAME, DEPT_CODE, DEPT_TITLE
+      FROM EMPLOYEE
+      JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID);
+
+      ※ ANSI 표준에서는 JOIN과 ON을 사용함
+
+      ## 연결에 사용할 두 테이블의 컬럼이 서로 같은 경우 ##
+
+      - ORACLE 전용 구문
+      SELECT EMP_ID, EMP_NAME, EMPLOYEE, JOB_CODE, JOB_NAME
+      FROM EMPOYEE, JOB
+      WHERE EMPLOYEE, JOB_CODE = JOB, JOB_CODE;
+
+      ※ ORACLE에서는 테이블 명, 컬럼 명을 이용해서 작성
+
+
+      @ JOIN의 종류
+      - INNER JOIN(내부 조인) : 교집합 (일반적으로 사용하는 JOIN)
+      - OUTER JOIN(외부 조인) : 합집합
+
+        => LEFT OUTER JOIN(왼쪽 외부 조인)
+        => RIGHT OUTER JOIN(오른쪽 외부 조인)
+        => FULL OUTER JOIN(완전 외부 조인)
+
+      @ INNER JOIN
+      => 테이블 A와 테이블 B 모두 조건 구문에 일치하는 데이터만 반환
+
+      SELECT <컬럼> FROM <테이블 A> INNER JOIN <테이블 B> ON <조건 구문>;
+
+      테이블 A의 EMP_NAME과 DEP_CODE
+      -> SELECT EMP_NAME, DEPT_CODE FROM EMPLOYEE;
+
+      테이블 B의 DEPT_ID와 DEPT_TITLE
+      -> SELECT DEPT_ID, DEPT_TITLE FROM DEPARTMENT;
+
+      테이블 A의 EMP_DEPT와 테이블 B의 DEPT_ID가 일치한 데이터의 EMP_NAME과 EMP_DEPT를 출력
+      FROM EMPLOYEE
+      INNER JOIN DEPARTMENT ON (DEPT_CODE = DEPT_ID);
