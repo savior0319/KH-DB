@@ -1,0 +1,15 @@
+
+  ANY : 서브 쿼리의 결과 중에서 하나라도 참이면 참
+    > ANY : 최소 값 보다 크면
+    >= ANY : 최소 값 보다 크거나 같으면
+    < ANY : 최대 값 보다 작으면
+    <= ANY : 최대 값 보다 작거나 같으면
+    = ANY : IN과 같은 효과
+    != ANY : NOT IN 과 같은 효과
+
+
+    ex) x > ANY(....)
+
+    SELECT EMP_NAME, SALARY
+    FROM EMPLOYEE
+    WHERE SALARY > ANY(2000000, 5000000);

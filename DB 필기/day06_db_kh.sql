@@ -1,0 +1,47 @@
+/* 최대 값 (= 5000000) 보다 작은 값 */
+SELECT EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE SALARY < ANY(2000000, 5000000); 
+
+/* 최소 값 (= 2000000) 보다 큰 값 */
+SELECT EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE SALARY > ANY(2000000, 5000000); 
+
+/* J3 코드를 가진 사람의 급여들을 비교 */
+SELECT SALARY
+FROM EMPLOYEE
+WHERE JOB_CODE LIKE 'J3';
+
+/* J3 코드를 가진 사람들의 급여 중에서 가장 작은 사람보다 큰 급여들을 출력 */
+SELECT EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE SALARY > ANY(
+SELECT SALARY 
+FROM EMPLOYEE 
+WHERE JOB_CODE LIKE 'J3');
+
+/* D1 또는 D5 부서코드를 가지고 있는 사원 들의 급여 중에서 
+가장 높은 급여보다 작은 모든 사원들의 이름, 급여, 부서코드를 출력하여라 */
+SELECT  EMP_NAME "이름", 
+TO_CHAR(SALARY, 'L999,999,999') "급여", 
+NVL(DEPT_CODE, '부서X') "부서코드"
+FROM EMPLOYEE
+WHERE SALARY < ANY(
+SELECT SALARY
+FROM EMPLOYEE
+WHERE DEPT_CODE IN ('D1', 'D5'));
+
+/* 부서별 평균 급여를 조사하였을 때 가장 낮은 부서의 급여보다
+높거나 같은 모든 사원들의 이름, 급여, 부서명을 출력하시오*/
+SELECT EMP_NAME "이름", 
+TO_CHAR(SALARY, 'L999,999,999') "급여",
+NVL(DEPT_TITLE, '부서없음') "부서명"
+FROM EMPLOYEE, DEPARTMENT
+WHERE DEPT_CODE = DEPT_ID(+)
+AND SALARY >= ANY(SELECT AVG(SALARY)  FROM EMPLOYEE GROUP BY DEPT_CODE);
+
+
+
+
+
