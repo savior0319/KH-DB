@@ -70,3 +70,65 @@
     -> 성능이 좋지는 않음
     -> 이전까지는 서브쿼리가 독단적으로 행동하고 내놓은 결과값을 사용하였고
       상관 서브쿼리는 메인쿼리의 테이블을 서브쿼리에서 가져다가 사용하는 쿼리문
+
+    @ 스칼라 서브쿼리
+    -> 상관쿼리 이면서 결과값이 1개인 서브쿼리가
+    -> 스칼라 서브쿼리는 다양하게 사용함
+
+    ### 스칼라 서브쿼리 - SELECT 절에서 사용
+
+    SELECT E.EMP_ID, E.EMP_NAME, E.MANAGER_ID,
+      NVL((SELECT E2.EMP_NAME
+      FROM EMPLOYEE E2
+      WHERE E.MANAGER_ID = E2.EMP_ID), '없음') AS "관라지명"
+    FROM EMPLOYEE E
+    ORDER BY 1;
+
+    ### 스칼라 서브쿼리 - WHERE 절에서 사용
+
+    ex) 자신이 속한 직급의 평균 급여보다 많이 받는 직원의 이름, 직급 코드, 급여를 출력
+        SELECT EMP_NAME, JOB_CODE, SALARY
+        FROM EMPLOYEE E1
+        WHERE SALARY >= (SELECT AVG(SALARY)
+        FROM EMPLOYEE E2
+        WHERE E2.JOB_CODE = E1.JOB_CODE)
+        ORDER BY 2;
+
+
+    @ 인라인 뷰 (FROM 절에서의 서브쿼리)
+    -> FROM 절에 서브쿼리를 사용한 것을 인라인뷰(INLINE-VIEW) 라고 함
+
+    ex)
+    SELECT *
+    FROM (SELECT EMP_NAME, SALARY, DEPT_CODE
+    FROM EMPLOYEE
+    WHERE SALARY >= 3000000)
+    WHERE DEPT_CODE IN ('D5', 'D9');
+
+    ## TOP-N분석
+
+      -> TOP-N 질의는 컬럼에서 가장 큰 N개의 값 또는 가장 작은 N개의 값을
+      요청 할 때 사용이 됨
+
+      ex) 회사에서 가장 적게 팔린 제품 10가지는?
+      혹은
+      회사에서 가장 소득이 많은 사람 3명
+
+  @ WITH
+  -> 서브쿼리에 이름을 붙여주고, 인라인뷰로 사용시 서브쿼리의 이름으로
+    FROM 절에 기술할 수 있음
+  -> 같은 서브쿼리가 여러번 사용 될 경우 중복 작성을 피할 수 있고,
+    실행 속도도 빨라지는 장점이 있음
+
+    @ RANK() OVER
+    -> 순위를 표현하며, 중복 순위를 표현한 다음은 해당 개수를 건너뛰고 나타냄
+    -> 즉, 1, 2, 3, 4, 5, 6, 6, 6, 9, 10
+
+    @ DENSE_RANK() OVER
+    -> 순위를 표현하며, 중복 순위에 상관없이 순차적으로 반환
+    -> 즉, 1, 2, 3, 4, 5, 6, 6, 6, 7, 8
+
+    @ ROW_NUMBER() OVER
+    -> 순위를 표현하며, 중복과 관게없이 무조건 순대로 반환
+    -> 즉, 중복 값이 있다 하더라도 중복을 표현하지 않음
+    -> 즉, 1, 2, 3, 4, 5, 6, 7, 8, 10
