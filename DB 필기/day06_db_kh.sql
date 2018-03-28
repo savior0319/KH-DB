@@ -32,6 +32,8 @@ SELECT SALARY
 FROM EMPLOYEE
 WHERE DEPT_CODE IN ('D1', 'D5'));
 
+/* 서브쿼리에서 나온 결과들 중에서 하나라도 작다면 (< ANY)*/
+
 /* 부서별 평균 급여를 조사하였을 때 가장 낮은 부서의 급여보다
 높거나 같은 모든 사원들의 이름, 급여, 부서명을 출력하시오*/
 SELECT EMP_NAME "이름", 
@@ -42,6 +44,72 @@ WHERE DEPT_CODE = DEPT_ID(+)
 AND SALARY >= ANY(SELECT AVG(SALARY)  FROM EMPLOYEE GROUP BY DEPT_CODE);
 
 
+/* ALL (2000000 보다 크고 5000000보다도 큰 SALARY) */
+SELECT EMP_NAME, SALARY
+ FROM EMPLOYEE
+WHERE SALARY > ALL(2000000, 5000000);
 
+
+/* 실습 D2 부서의 모든사원보다 적은 급여를 받는 사원을 조회 */
+SELECT EMP_NAME "사원"
+FROM EMPLOYEE
+WHERE SALARY < ALL(SELECT SALARY FROM EMPLOYEE WHERE DEPT_CODE IN ('D2'));
+
+/* 보너스 포인트 3.0 이상인 사원들이 있다면
+모든 사원의 정보를 출력해 주어라*/
+SELECT *
+FROM EMPLOYEE
+WHERE EXISTS (SELECT BONUS FROM EMPLOYEE WHERE BONUS >= 0.3);
+
+/* 보너스율이 1이상인 사원이 없다면
+모든 사원의 이름, 급여를 출력하되 10% 인상된 급여로 출력하여라
+보너스율이 1이상인 사원이 있다면 출력 X*/
+SELECT EMP_NAME, SALARY * 1.1
+FROM EMPLOYEE 
+WHERE NOT EXISTS (SELECT BONUS FROM EMPLOYEE WHERE BONUS >= 1);
+
+/* 회사에서 퇴사한 여직원가 같은 부서 및 직급인 사원을 검색 */
+SELECT EMP_NAME
+FROM EMPLOYEE
+WHERE (DEPT_CODE, JOB_CODE) IN (SELECT DEPT_CODE, JOB_CODE
+FROM EMPLOYEE
+WHERE ENT_YN LIKE 'Y' AND SUBSTR(EMP_NO, 8, 1) LIKE 2);
+
+
+/* 실습문제 기술지원부에서 급여가 2,000,000원 직원의 이름, 부서코드, 급여, 부서의 지역명을 출력 */
+SELECT EMP_NAME "이름", 
+DEPT_CODE "부서코드", 
+TO_CHAR(SALARY, 'L999,999,999') "급여", 
+LOCAL_NAME "지역명"
+FROM EMPLOYEE, LOCATION, DEPARTMENT
+WHERE LOCAL_CODE LIKE LOCATION_ID 
+AND DEPT_ID LIKE DEPT_CODE AND (DEPT_TITLE, SALARY) 
+IN(SELECT DEPT_TITLE, SALARY FROM EMPLOYEE, DEPARTMENT 
+WHERE DEPT_ID LIKE DEPT_CODE  AND DEPT_TITLE LIKE '기술지원부' AND SALARY LIKE 2000000);
+
+/* 직급별 최소 급여를 받는 직원의 이름, 사번, 부서코드, 입사일, 연봉을 출력 */
+SELECT EMP_NAME "이름", 
+EMP_ID "사번", 
+DEPT_CODE "부서코드", 
+HIRE_DATE "입사일", 
+TO_CHAR(SALARY * 12, 'L999,999,999') "연봉"
+FROM EMPLOYEE
+WHERE (JOB_CODE, SALARY)
+IN (SELECT JOB_CODE, MIN(SALARY)
+FROM EMPLOYEE 
+GROUP BY JOB_CODE);
+
+
+/* 상관쿼리 - (메인 쿼리를 서브쿼리의 비교 대상으로 사용)
+관리자가 있는 사원들 중 관리자의 사번이 EMPLOYEE 테이블에 존재하는 
+직원의 사번과 같을 때 직원의 사번, 이름, 소속부서, 관리자 사번을 조회*/
+SELECT EMP_ID "사번",
+EMP_NAME "이름",
+DEPT_CODE "부서번호",
+MANAGER_ID "매니저사번"
+FROM EMPLOYEE E1
+WHERE EXISTS (SELECT NULL 
+FROM EMPLOYEE E2
+WHERE E1.MANAGER_ID LIKE E2.EMP_ID);
 
 

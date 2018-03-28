@@ -1,5 +1,5 @@
 
-  ANY : 서브 쿼리의 결과 중에서 하나라도 참이면 참
+  ANY : 서브 쿼리의 결과 중에서 하나라도 참이면 참 (= OR)
     > ANY : 최소 값 보다 크면
     >= ANY : 최소 값 보다 크거나 같으면
     < ANY : 최대 값 보다 작으면
@@ -7,9 +7,66 @@
     = ANY : IN과 같은 효과
     != ANY : NOT IN 과 같은 효과
 
-
     ex) x > ANY(....)
 
     SELECT EMP_NAME, SALARY
     FROM EMPLOYEE
     WHERE SALARY > ANY(2000000, 5000000);
+
+    X < Y (5, 6, 7, 8, 9) -> 9보다 작은
+    X > Y (5, 6, 7, 8, 9) -> 5보다 큰
+
+    ALL : 서브 쿼리의 결과 중에서 모두 참이면 참 (= AND)
+    > ALL : 최대값 보다 크면
+    >= ALL : 최대값 보다 크거나 같으면
+    < ALL : 최소값보다 작으면
+    <= ALL : 최소값보다 작거나 같으면
+    = ALL : 같다면
+    (SUBSELECT의 결과가 1건이면 상관없지만 여러건이면 정상 처리 되지 않음)
+    != ALL : 같지 않다면
+    (위와 마찬가지로 결과가 여러건이면 오류)
+
+    ex) x > ALL(...)
+
+    SELECT EMP_NAME, SALARY
+    FROM EMPLOYEE
+    WHERE SALARY > ALL(2000000, 5000000);
+
+    EXIST : 서브쿼리의 결과 중에서 만족하는 값이 하나라도 존재하면 참
+     	※ 중요한것은 단순 참,거짓을 판단하는 기준이 되는 서브쿼리 연산자
+
+    @ 다중열 서브쿼리
+    -> 서브쿼리의 조회 결과 컬럼의 개수가 여러개일 때
+        (다중행과는 다르게 결과 값이 아닌 컬럼이 여러개 일 때)
+
+    ex)
+    /* 실습문제 기술지원부에서 급여가 2,000,000원 직원의 이름, 부서코드, 급여, 부서의 지역명을 출력 */
+    SELECT EMP_NAME "이름", DEPT_CODE "부서코드", TO_CHAR(SALARY, 'L999,999,999') "급여", LOCAL_NAME "지역명"
+    FROM EMPLOYEE, LOCATION, DEPARTMENT
+    WHERE LOCAL_CODE LIKE LOCATION_ID
+    AND DEPT_ID LIKE DEPT_CODE AND (DEPT_TITLE, SALARY)
+    IN(SELECT DEPT_TITLE, SALARY FROM EMPLOYEE, DEPARTMENT
+    WHERE DEPT_ID LIKE DEPT_CODE  AND DEPT_TITLE LIKE '기술지원부' AND SALARY LIKE 2000000);
+
+    @ 다중행 다중열 서브쿼리
+    -> 서브쿼리의 조회 결과 컬럼의 개수와 행의 개수가 여러개 일 때
+
+    ex)
+    /* 직급별 최소 급여를 받는 직원의 이름, 사번, 부서코드, 입사일, 연봉을 출력 */
+    SELECT EMP_NAME "이름",
+    EMP_ID "사번",
+    DEPT_CODE "부서코드",
+    HIRE_DATE "입사일",
+    TO_CHAR(SALARY * 12, 'L999,999,999') "연봉"
+    FROM EMPLOYEE
+    WHERE (JOB_CODE, SALARY)
+    IN (SELECT JOB_CODE, MIN(SALARY)
+    FROM EMPLOYEE
+    GROUP BY JOB_CODE);
+
+    @ 상관 서브쿼리 (상호 연관 서브쿼리)
+    -> 메인쿼리의 값을 서브쿼리에 주고 서브쿼리를 수행한 다음 결과를
+      다시 메인 쿼리로 반환해서 수행하는 쿼리
+    -> 성능이 좋지는 않음
+    -> 이전까지는 서브쿼리가 독단적으로 행동하고 내놓은 결과값을 사용하였고
+      상관 서브쿼리는 메인쿼리의 테이블을 서브쿼리에서 가져다가 사용하는 쿼리문
