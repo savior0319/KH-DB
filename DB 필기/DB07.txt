@@ -378,3 +378,8 @@ S
     WHERE DEPT_TITLE LIKE '총무부';
 
     SELECT * FROM DEPT_COPY;
+
+  @ MERGE
+    -> 구조가 같은 두개의 테이블을 하나의 테이블로 합치는 기능
+    -> 두 테이블에서 지정하는 조건의 값이 존재하면 UPDATE가 되고,
+    조건의 값이 없으면 INSERT 되도록 하는 기능
