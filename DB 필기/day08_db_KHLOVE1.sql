@@ -1,0 +1,7 @@
+/* KH 계정 COFFEE 릴레이션 조회 */
+SELECT *
+FROM KH.COFFEE;
+
+/* SYSTEM 계정에서 (GRANT INSERT ON KH.COFFEE TO  KHLOVE1;) INSERT 권한을 주어야 함 */
+INSERT INTO KH.COFFEE
+VALUES('루카스', 35000, '남양');

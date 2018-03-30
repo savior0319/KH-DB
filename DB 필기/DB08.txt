@@ -94,18 +94,74 @@
     ALTER TABLE MEMBER_TEST
     RENAME COLUMN USER_PWD TO PASSWORD;
 
-    /* 컬럼의 데이터 타입 수정
-    USER_NAME VARCHAR2(20) -> CHAR(30) */
-    ALTER TABLE MEMBER_TEST
-    MODIFY USER_NAME CHAR(30);
-
-    /* DEFAULT 값 수정 USER_AGE 값 수정 */
-    ALTER TABLE MEMBER_TEST
-    MODIFY USER_AGE DEFAULT 99;
-
-
   @ 컬럼 삭제
   -> 해당 테이블에 생성되어 있는 컬럼을 삭제 할 수 있음
-  /* USER_AGE 컬럼 삭제 */
-  ALTER TABLE MEMBER_TEST
-  DROP COLUMN USER_AGE;
+    /* USER_AGE 컬럼 삭제 */
+    ALTER TABLE MEMBER_TEST
+    DROP COLUMN USER_AGE;
+
+      /* 간단 예제
+    MEMBER_TEST01 테이블의 USER_ID를
+    MEMBER_FOREIGN 테이블에서 참조 하고 있을 때
+    MEMBER_TEST01 테이블에서 USER_ID 컬럼을 삭제 하고 싶은 경우*/
+
+    ALTER TABLE MEMBER_TEST01
+    DROP COLUMN USER_ID CASCADE CONSTRAINTS;
+    -- 해당 컬럼을 삭제할때 제약조건이 연결되어 있다면 해당 제약조건도 모두 삭제하면서 컬럼을 지우는 SQL
+
+    /* MEMBER_TEST 테이블 설정된 UNIQUE 제약 조건 삭제 */
+    ALTER TABLE MEMBER_TEST
+    DROP CONSTRAINT MEMBER_ID_UNQ;
+
+    /* 제약조건 이름 변경
+    설정되어 있는 제약조건의 이름을 변경 할 수 있음*/
+    ALTER TABLE MEMBER_TEST
+    RENAME CONSTRAINT SYS_C007216 TO MEMBER_NO_PK;
+
+    /* 테이블 이름 변경
+    생성된 테이블의 이름 변경이 가능함 */
+    ALTER TABLE MEMBER_TEST
+    RENAME TO MEMBER_TEST_T;
+
+    /* 테이블 삭제 */
+    DROP TABLE MEMBER_TEST_T;
+
+    /* 연결된 제약조건도 같이 삭제 */
+    DROP TABLE MEMBER_TEST_T CASCADE CONSTRAINTS;
+
+  @ DCL (DATA CONTROL LANGUAGE)
+  -> 데이터 제어어
+  -> DB에 대한 보안, 무결성, 복구 등 DBMS 제어하기 위한 언어
+  -> GRANT(권한 할당), REVOKE(권한 해제), COMMIT(실행), ROLLBACK(복구)
+  -> COMMIT, ROLLBACK은 트랙잭션에 관련된 언어로 TCL로 구분하기도 함
+
+
+  @ GRANT
+  -> 사용자 또는 ROLE에 대하여 권한을 부여 가능
+
+  사용법
+
+  GRANT [SYSTEM_PRIVILEGE|ROLE] TO [USER|ROLE|PUBLIC] WITH ADMIN OPTION
+    - SYSTEM_PRIVILEGE : 부여할 시스템 권한의 이름
+    - ROLE : 부여할 데이터베이스 역할의 이름
+    - USER.ROLE : 부여할 사용자 이름과 데이터 베이스 역할 이름
+    - PUBLIC :시스템 권한 또는 데이터 베이스 역할을 모든 사용자에게 부여
+    - WITH ADMIN OPTION : 권한을 부여받은 사용자도 부여 받은 권한을
+                      다른 사용자 또는 역할로 부여 가능
+
+ ※정리하면 -> GRANT 권한 TO 권한받을 대상
+
+  ex)
+    GRANT CONNECT TO TEST (TEST 계정에 CONNECT(접속) 권한 부여)
+
+    /* 계정생성 */
+    CREATE USER KHLOVE1 IDENTIFIED BY KHLOVE1;
+
+    /* 접속 권한 부여 */
+    GRANT CONNECT TO KHLOVE1;
+
+  @ REVOKE
+  -> 사용자 또는 ROLE에 대하여 부여된 권한 회수
+
+  REVOKE 권한 FROM 계정 또는 ROLE;
+  
