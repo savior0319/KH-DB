@@ -1,0 +1,111 @@
+
+  @ DELETE
+  -> 테이블의 행을 삭제하는 구문
+  -> 테이블 행 개수가 줄어듦
+  -> DELETE 시에 조건문을 사용하지 않게 되면 TABLE의 모든 데이터가 삭제 될 수 있음
+  -> 외래키 제약조건이 설정되어 있는 경우 참조되고 있는 값은 삭제 할 수 없음
+
+  형식
+
+  DELETE FROM 테이블명
+  WHERE 조건
+
+  ※ 조건을 쓰지 않게 되면 해당 테이블이 모든 내용이 삭제 되므로 주의!!
+
+  ex)
+  /* 사원번호 201인 사원 삭제 */
+  DELETE FROM EMP_TEMP
+  WHERE EMP_ID LIKE 201;
+
+  /* 급여 2백만원인 사원 삭제 (= 두명이 삭제됨) */
+  DELETE FROM EMP_TEMP
+  WHERE SALARY LIKE 2000000;
+
+  -> 삭제 시 외래키(FOREIGN KEY) 제약 조건으로 컬럼 삭제가 불가능 한 경우
+  제약조건을 비활성화 할 수 있음
+
+@ TRUNCATE
+-> 테이블의 전체 행을 삭제 시 사용
+-> DELETE 문보다 수행 속도가 빠르지만, ROLLBACK을 통해 복구를 할 수 없음
+-> DELETE와 마찬가지로 FOREIGN KEY 제약조건일 때는 적용 불가능하기 때문에
+  제약조건을 비활성화 해야 삭제 할 수 있음
+
+  형식
+  TRUNCATE TABLE 테이블명;
+
+  @ ALTER
+  -> 테이블에 정의된 내용을 수정 할 때 사용하는 데이터 정의어
+  -> 컬럼의 추가, 삭제, 제약 조건의 추가/삭제, 컬럼의 자료형 변경,
+    DEFAULT값 변경(옵션), 테이블명/컬럼명/제약조건의 이름 변경 등을 할 수 있음
+
+    ## 연습용 TABLE을 생성
+    CREATE TABLE MEMBER_TEST(
+        USER_NO NUMBER PRIMARY KEY,
+        USER_ID VARCHAR2(20),
+        USER_PWD CHAR(20)
+    );
+
+    ex)
+    /* ALTER */
+    CREATE TABLE MEMBER_TEST(
+      USER_NO NUMBER PRIMARY KEY,
+      USER_ID VARCHAR2(20),
+      USER_PWD CHAR(20)
+    );
+
+    /* 테이블에 USER_ID 컬럼 생성 */
+    ALTER TABLE MEMBER_TEST
+    ADD USER_NAME VARCHAR2(20);
+
+    /* USER_AGE 컬럼 추가 및 DEFAULT 값 설정 */
+    ALTER TABLE MEMBER_TEST
+    ADD USER_AGE NUMBER DEFAULT 0;
+
+
+    /* 제약조건이 없으면 중복된 ID가 저장됨 */
+    INSERT INTO MEMBER_TEST
+    VALUES (2, 'USER11', '2222', '김말똥', DEFAULT);
+
+    /* 제약조건 추가
+    형식
+    ALTER TABLE 테이블 명 ADD CONSTRAINT 제약조건(이름) 제약조건(컬럼)*/
+    ALTER TABLE MEMBER_TEST
+    ADD CONSTRAINT MEMBER_ID_UNQ UNIQUE(USER_ID); -- 제약조건 이름 (= MEMBER_ID_UNQ)
+
+    /* 테이블 제약조건, DEFAULT 값 검색 */
+    SELECT COLUMN_NAME, DATA_DEFAULT
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME LIKE 'MEMBER_TEST';
+
+    SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE
+    FROM USER_CONSTRAINTS
+    WHERE TABLE_NAME LIKE 'MEMBER_TEST';
+
+
+  @ 컬럼 수정
+  -> 이미 만들어진 테이블의 컬럼을 수정할 수 있음
+
+  ex)
+    /* NOT NULL 제약조건을 추가 할 때에는 ADD가 아닌 MODIFY를 해야함 */
+    ALTER TABLE MEMBER_TEST
+    MODIFY USER_PWD CONSTRAINT MEMBER_PWD_NN NOT NULL;
+
+    /* 컬럼명 수정 USER_PWD -> PASSWORD */
+    ALTER TABLE MEMBER_TEST
+    RENAME COLUMN USER_PWD TO PASSWORD;
+
+    /* 컬럼의 데이터 타입 수정
+    USER_NAME VARCHAR2(20) -> CHAR(30) */
+    ALTER TABLE MEMBER_TEST
+    MODIFY USER_NAME CHAR(30);
+
+    /* DEFAULT 값 수정 USER_AGE 값 수정 */
+    ALTER TABLE MEMBER_TEST
+    MODIFY USER_AGE DEFAULT 99;
+
+
+  @ 컬럼 삭제
+  -> 해당 테이블에 생성되어 있는 컬럼을 삭제 할 수 있음
+  /* USER_AGE 컬럼 삭제 */
+  ALTER TABLE MEMBER_TEST
+  DROP COLUMN USER_AGE;
