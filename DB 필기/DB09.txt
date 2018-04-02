@@ -291,3 +291,91 @@
     NEXTVAL : 현재 시퀸스 값의 다음 값을 반환
 
     ※ 첫 시작 값은 없으므로 NEXTVAL을 무조건 1번 실행하고 CURRVAL을 해야 함
+
+    @ 시퀸스 수정
+    -> ALTER를 통해 해당 시퀸스를 수정할 수 있음
+
+    ex)
+    ALTER SEQUENCE SEQ_EMPID
+    INCREAMENT BY 10
+    MAXVALUE 400
+    NOCYCLE
+    NOCACHE;
+
+    ※ START WITH 값은 변경이 불가능하기 때문에 만약 다시 시작값을 정하고 싶다면
+    해당 시퀸스를 삭제하고 재 성성 해야 함
+
+    @ 시퀸스 삭제
+
+    DROP SEQUENCE 시퀸스명;
+
+    ex) DROP SEQUENCE SEQ_EMPID;
+
+    @ INDEX
+    -> SQL 명령문의 처리 속도를 향상 시키기 위해서 사용하는 오라클 객체
+
+    @ INDEX의 장점
+    -> 검색 속도가 빨라지고 시스템에 걸리는 부하를 줄여서 시스템 전체 성능을 향상 시킬 수 있음
+
+    @ INDEX의 단점
+    -> 인덱스를 위한 추가 저장 공간이 필요하고, 인덱스를 생성하는데 시간이 걸림
+    -> 따라서 데이터의 변경 작업(INSERT/UPDATE/DELETE)이 자주 일어나는
+    테이블 INDEX를 생성 시 오히려 성능 저하가 발생 할  수 있음
+    데이터가 변경되면 다시 새로운 알고리즘을 적용하여 INDEX를 생성해야 하기 때문에 오히려 성능
+    저하가 발생 할 수 있음
+
+    ※ 실제 INDEX를 사용하여 효과적인 속도를 체감 하려면 테이블에 데이터가 많아야지만 속도를 조금이나마
+     체감 할 수 있음..(수업에는 불가 )
+
+
+    @ INDEX 생성 표현식
+
+    -> CREATE INDEX 인덱스명 ON 테이블명 (컬럼명1, 컬럼명2, 컬럼명3, ......);
+
+    @ INDEX 삭제 표현식
+
+    -> DROP INDEX 인덱스명;
+
+    @ INDEX 정보 조회 (Data Dictionary)
+
+      SELECT *
+      FROM USER_IND_COLUMNS;
+
+      ex)
+      /* INDEX 생성 */
+        CREATE INDEX EMP_INDEX
+        ON EMPLOYEE (EMP_ID, EMP_NAME, SALARY); -- F10
+
+        SELECT EMP_ID, EMP_NAME, SALARY
+        FROM EMPLOYEE;
+
+        /* INDEX 삭제 */
+        DROP INDEX EMP_INDEX;
+
+    @ SYNONYM (동의어)
+    -> 사용자가 다른 사용자의 객체를 참조 할 때 [사용자 ID], [테이블명]으로 표시 해야 함
+    -> 이처럼 길게 표현되는 것을 동의어(SYNONYM)로 설정하여 간단히 사용이 가능함
+
+    ## 비공개 동의어
+    -> 객체에 대한 접근 권한을 부여 받은 사용자가 정의한 동의어
+    -> 해당 사용자만 사용할 수 있음
+
+    ## 공개 동의어
+    -> 권한을 주는 사용자(DBA)가 정의한 동의어
+    -> 모든 사용자가 사용할 수 있음(PUBLIC)
+
+      ex) DICTIONARY -> DICT
+
+
+   ## 비공개 동의어 생성
+
+    CREATE SYNONYM EMP FRO EMPLOYEE;
+
+    ※ 단, 동의어를 생성하려면 권한이 필요함
+        GRANT CREATE SYNONYM TO kh;
+
+
+  ## 공개 동의어 생성
+  -> 공개 동의어는 DBA 계정으로 생성 해야 함 (system 계정)
+
+    CREATE PUBLIC SYNONYM DEPT FOR DEPARTMENT;
