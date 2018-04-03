@@ -1,0 +1,28 @@
+
+  @ PL/SQL
+  -> Procedural Language Extension TO SQL의 약자
+  -> 오라클 자체에 내장되어 있는 절차적 언어로써, SQL의 단점을 보완하여
+  SQL 문장내에서 변수의 정의, 조건처리, 반복처리 등을 지원함
+
+  @ PL/SQL의 유형
+  -> PL/SQL의 유형은 Anonymous Block(익명 블록), Procedure(프로시저),
+    Function(함수)가 있음
+
+  -> Anonymous Block
+    - 이름 없는 블록이라 불리며 간단한 block 수행시 사용 됨 (1회용)
+
+  -> Procedure
+    -> 지정된 특정 처리를 실행하는 서브 프로그램의 한 유형으로 단독으로 실행되거나
+    다른 프로시저나 다른 룰 (Oracle Developer, sqlplus) 등에 의해 호출되어 실행 됨
+
+  -> 함수
+    -> 프로시저와 수행되는 결과가 유사하나 값을 반환하는 형태
+    -> 프로시저는 리턴값이 없지만 함수는 리턴 값(반환 값)이 있음
+
+  @ PL/SQL 블록 문법
+
+  DECLARE [선언부]
+  BEGIN [실행부]
+  EXCEPTION [예외처리부]
+  END;
+  /

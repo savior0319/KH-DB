@@ -2,7 +2,7 @@
 계정 생성 : khtest
 권한 부여 : connect,resource
 
-테이블 2개 생성ㅋ
+테이블 2개 생성
 회원테이블(MEMBER), 게시판테이블(BOARD)
 
 ## 회원테이블 ##
@@ -15,7 +15,7 @@ MEMBER_EMAIL (VARCHAR2(30))	-- 회원 이메일			NOT NULL
 
 -> 회원 고유 번호는 1000번 부터 시작하여 1씩 증가 해야함
 -> MAX 번호는 1000000 번 까지
--> 성별은 '남' 또는 '여' 만 데이터 삽입이 가능 해야함 
+-> 성별은 '남' 또는 '여' 만 데이터 삽입이 가능 해야함
 
 
 ## 게시판 테이블 ##
@@ -33,7 +33,7 @@ BOARD_NICKNAME (VARCHAR2(20))	-- 글 작성자(닉네임)	NOT NULL 및 FOREIGN K
 
 ## 추가적인 OBJECT 생성하기 ##
 
-1. 위에 사항을 확인하고 필요한 SEQUENCE 객체 만들기 
+1. 위에 사항을 확인하고 필요한 SEQUENCE 객체 만들기
 2. 회원번호 , 회원닉네임, 회원 이메일, 회원 작성글 제목 을
 볼 수 있는 VIEW 만들기
 3. 작성글을 검색할때 빠르게 검색하기 위하여 TITLE,CONTENT에 INDEX 객체 만들기
@@ -42,7 +42,7 @@ ex)	SELECT * FROM M; -- MEMBER 테이블 정보가 보여야 함
 
 
 
-※ 각종 확인은 직접 데이터를 넣고 확인 해보세요 
+※ 각종 확인은 직접 데이터를 넣고 확인 해보세요
 */
 
 
@@ -90,7 +90,7 @@ FOREIGN KEY (BOARD_NICKNAME) REFERENCES MEMBER(MEMBER_NICKNAME)
 CREATE SEQUENCE MEMBER_NO_SEQ
 START WITH 1000
 INCREMENT BY 1
-MAXVALUE 1000000 
+MAXVALUE 1000000
 NOCYCLE
 NOCACHE;
 
@@ -112,7 +112,7 @@ FROM MEMBER, BOARD
 WHERE MEMBER_NICKNAME LIKE BOARD_NICKNAME;
 
 /* 인덱스 */
-CREATE INDEX BOARD_INDEX 
+CREATE INDEX BOARD_INDEX
 ON BOARD(BOARD_TITLE, BOARD_CONTENT);
 
 /* SYNONYM 생성 */
