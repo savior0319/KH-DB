@@ -273,6 +273,7 @@ ex)
 
   ex)
 
+
   DECLARE
   TYPE MY_ROW_TYPE IS RECORD(
     ID EMPLOYEE.EMP_ID%TYPE,
@@ -290,3 +291,83 @@ ex)
     DBMS_OUTPUT.PUT_LINE('급여 : ' || EMP.SALARY);
   END;
   /
+
+  @ PL/SQL의 선택문
+  -> PL/SQL에서 모든 문자들은 기술한 순서대로 순차적으로 수행이 됨
+  -> 문장을 선택적으로 수행하려면 IF문을 사용 하면 됨
+
+  ## IF ~ THEN ~ END IF 문 ##
+
+  형식
+  IF 조건 THEN
+        조건을 만족할 경우 처리 구문;
+  END IF
+
+  예제 ) 사원 번호를 가지고 사원의 사번, 이름, 급여, 보너스율을 출력하고
+        보너스율이 없으면 '보너스를 지급받지 않는 사원입니다' 를 출력하려면
+
+  ex)
+    DECLARE
+    EMPNUM EMPLOYEE.EMP_ID%TYPE;
+    EMPNAME EMPLOYEE.EMP_NAME%TYPE;
+    EMPSALARY EMPLOYEE.SALARY%TYPE;
+    EMPBONUS EMPLOYEE.BONUS%TYPE;
+    BEGIN
+      SELECT EMP_ID, EMP_NAME, SALARY, NVL(BONUS, 0)
+      INTO EMPNUM , EMPNAME, EMPSALARY, EMPBONUS
+      FROM EMPLOYEE
+      WHERE EMP_ID = '&EMP_ID';
+      DBMS_OUTPUT.PUT_LINE('사원번호 -> ' || EMPNUM);
+      DBMS_OUTPUT.PUT_LINE('이름 -> ' || EMPNAME);
+      DBMS_OUTPUT.PUT_LINE('급여 -> ' || EMPSALARY);
+      DBMS_OUTPUT.PUT_LINE('보너스율 -> ' || LTRIM(TO_CHAR(EMPBONUS * 100, 'FM99D0'), '.') || '%');
+      IF(EMPBONUS = 0)
+      THEN  DBMS_OUTPUT.PUT_LINE('보너스를 지급 받지 않는 사원입니다');
+      END IF;
+    END;
+
+  ## IF ~ THEN ~ ELSE ~ ELSE IF ##
+
+  형식
+  IF 조건 THEN
+    조건을 만족할 경우 처리 구문;
+  ELSE
+    조건을 만족하지 않을 경우 처리 구문;
+  END IF;
+
+    예제 ) 사원번호를 가지고 사원의 사번 이름, 급여, 보너스율을 출력 함
+    이때, 보너스율이 없으면 '보너스를 지급 받지 않는 사원 입니다'를 출력하고
+    보너스율이 있다면 보너스율을 출력함
+    (즉, 보너스율이 0%라면 보너스율을 출력하지 않음)
+
+
+    ## IF ~ THEN ELSEIF ~ ELSE END IF ##
+    IF 조건1 THEN
+          조건1을 만족할 경우 처리 구문;
+    ELSIF 조건2 THEN
+          조건2를 만족할 경우 처리 구문;
+    ELSIF 조건3 THEN
+          조건3을 만족할 경우 처리 구문;
+    ELSE
+          모든 조건을 만족하지 않을 경우 처리 구문;
+    END IF;
+
+
+  ## CASE 문 ##
+  -> 자바의 SWITCH 문과 유사함
+  -> CASE ~ END CASE;
+
+  유형 1
+  CASE 표현식
+      WHEN 값1 THEN
+          실행문 1;
+      WHEN 값2 THEN
+          실행문 2;
+      ELSE 기본실행문3;
+  END CASE;
+
+예시) 1 ~ 3 까지의 수를 입력 받고
+  1을 입력 받으면 '안녕하세요'
+  2를 입력 받으면 '반갑습니다'
+  3을 입력 받으면 '행복하세요'
+그 외 입력 시는 '잘못 입력하셨습니다'를 출력하는 코드
