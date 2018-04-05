@@ -369,7 +369,7 @@
 
    ## 비공개 동의어 생성
 
-    CREATE SYNONYM EMP FRO EMPLOYEE;
+    CREATE SYNONYM EMP FOR EMPLOYEE;
 
     ※ 단, 동의어를 생성하려면 권한이 필요함
         GRANT CREATE SYNONYM TO kh;

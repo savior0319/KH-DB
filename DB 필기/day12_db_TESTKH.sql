@@ -1,0 +1,6 @@
+/* ROLE 권한 테스트 테이블 */
+CREATE TABLE TEST(
+TEST NUMBER
+);
+
+DROP TABLE TEST;

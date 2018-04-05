@@ -7,7 +7,7 @@
   	i NUMBER := 1;
 
   BEGIN
-  	LOOP+
+  	LOOP
   		DBMS_OUTPUT.PUT_LINE(i);
   		i := i + 1;
   		IF i > 5 THEN EXIT;
